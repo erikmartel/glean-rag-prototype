@@ -24,8 +24,8 @@ from tqdm import tqdm
 FAQ_DIR = "faqs"
 EMBED_MODEL = "text-embedding-ada-002"
 LLM_MODEL = "gpt-3.5-turbo"
-CHUNK_SIZE = 250  # increased to capture full policy paragraphs (equity text was being split before)
-TOP_K = 3 #decreased to avoid retrieving the entire small database
+CHUNK_SIZE = 300  # increased to capture one FAQ per embedding (equity text was being split before)
+TOP_K = 2 #decreased to capture just the 2 most relevant answers and avoid bloating context-window
 
 # Initialize the OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
