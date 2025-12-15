@@ -67,8 +67,18 @@ def embed_texts(texts):
     """
     embeddings = []
     for text in tqdm(texts, desc="Embedding"):
-        # TODO: Call the OpenAI embedding API and append the result as a numpy array
-        pass
+        # TODO1: Call the OpenAI embedding API and append the result as a numpy array
+
+        # Call OpenAI to get the embedding
+        response = client.embeddings.create(
+            input=[text],
+            model=EMBED_MODEL
+        )
+
+        # Extract the vector from the returned object and turn add to embeddings as numpy array
+        embedding = response.data[0].embedding
+        embeddings.append(np.array(embedding))
+
     return embeddings
 
 def main():
@@ -76,16 +86,27 @@ def main():
     chunks, sources = load_and_chunk_faqs(FAQ_DIR)
 
     # --- 2. Embed Chunks ---
-    # TODO: Embed the chunks using embed_texts
-    chunk_embeddings = []  # Replace with actual embeddings
+    # TODO2: Embed the chunks using embed_texts
+    chunk_embeddings = embed_texts(chunks)
+    #test faq embeddings were created correctly
+    print(f"DEBUG: Created {len(chunk_embeddings)} embeddings. First one has length: {len(chunk_embeddings[0])}")
 
     # --- 3. Query Loop ---
     query = input("Enter your question: ")
-    # TODO: Embed the query using client.embeddings.create
-    query_emb = None  # Replace with actual query embedding
+    # TODO3: Embed the query using client.embeddings.create
+    #send user's query to OpenAI to retrieve its vector
+    response = client.embeddings.create(
+        input=[query],
+        model=EMBED_MODEL
+    )
+    
+    #extract vector from response
+    query_emb = np.array(response.data[0].embedding)
+    #test uery embedding was created correctly
+    print(f"DEBUG: Query embedding created. Length: {len(query_emb)}")
 
     # --- 4. Retrieve Top-k ---
-    # TODO: Compute similarities and get top-k indices
+    # TODO4: Compute similarities and get top-k indices
     top_indices = np.argsort(sims)[-TOP_K:][::-1]
     top_chunks = [chunks[i] for i in top_indices]
     top_files = [sources[i] for i in top_indices]
@@ -99,7 +120,7 @@ def main():
         f"Question: {query}\n\n"
         f"Answer (cite sources):"
     )
-    # TODO: Generate answer using client.chat.completions.create
+    # TODO5: Generate answer using client.chat.completions.create
     answer = ""  # Replace with actual answer
 
     # --- 6. Output JSON ---
