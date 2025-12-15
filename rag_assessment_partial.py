@@ -107,9 +107,22 @@ def main():
 
     # --- 4. Retrieve Top-k ---
     # TODO4: Compute similarities and get top-k indices
+    #create array to hold similarity scores
+    sims = []
+    #loop through each chunk embedding to compare it to the query embedding
+    for chunk_embedding in chunk_embeddings:
+        sim = cosine_sim(query_emb, chunk_embedding)
+        sims.append(sim)
+
+    #convert sims list to numpy array for argsort function below
+    sims = np.array(sims)
+
     top_indices = np.argsort(sims)[-TOP_K:][::-1]
     top_chunks = [chunks[i] for i in top_indices]
     top_files = [sources[i] for i in top_indices]
+
+    #check cosine sim process to confirm chunks matching query are found
+    print("DEBUG: Top found files:", top_files)
 
     # --- 5. Generate Answer ---
     context = "\n\n".join([f"From {sources[i]}:\n{chunks[i]}" for i in top_indices])
