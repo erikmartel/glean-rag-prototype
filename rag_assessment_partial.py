@@ -134,7 +134,15 @@ def main():
         f"Answer (cite sources):"
     )
     # TODO5: Generate answer using client.chat.completions.create
-    answer = ""  # Replace with actual answer
+    response = client.chat.completions.create(
+        messages= [{"role": "user", "content":prompt}],
+        model=LLM_MODEL,
+        modalities=["text"],
+        temperature = 0.2,
+        verbosity="medium"
+
+    )
+    answer=response.choices[0].message.content
 
     # --- 6. Output JSON ---
     output = {
