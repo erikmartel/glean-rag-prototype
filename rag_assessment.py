@@ -24,8 +24,8 @@ from tqdm import tqdm
 FAQ_DIR = "faqs"
 EMBED_MODEL = "text-embedding-ada-002"
 LLM_MODEL = "gpt-3.5-turbo"
-CHUNK_SIZE = 300  # increased to capture one FAQ per embedding (equity text was being split before)
-TOP_K = 2 #decreased to capture just the 2 most relevant answers and avoid bloating context-window
+CHUNK_SIZE = 800  # increased to capture one entire file per embedding to preserve entire semantic units 
+TOP_K = 2 #chosen to provide top 2 files without pulling entire database
 
 # Initialize the OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -76,7 +76,7 @@ def embed_texts(texts):
             model=EMBED_MODEL
         )
 
-        # Extract the vector from the returned object and turn add to embeddings as numpy array
+        # Extract the vector from the returned object and add to embeddings as numpy array
         embedding = response.data[0].embedding
         embeddings.append(np.array(embedding))
 
@@ -93,7 +93,7 @@ def main():
     #test faq embeddings were created correctly
     print(f"Created {len(chunk_embeddings)} embeddings. ")
 
-
+    #create infinite loop until user quits
     while True:
 
         # --- 3. Query Loop ---
@@ -150,7 +150,7 @@ def main():
                 {"role": "user", "content":prompt}],
             model=LLM_MODEL,
             modalities=["text"],
-            temperature = 0.1,
+            temperature = 0,
             verbosity="medium"
 
         )
