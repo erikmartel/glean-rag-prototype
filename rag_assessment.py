@@ -112,8 +112,7 @@ def main():
         
         #extract vector from response
         query_emb = np.array(response.data[0].embedding)
-        #test uery embedding was created correctly
-        print(f"Query embedding successfully created.")
+ 
 
         # --- 4. Retrieve Top-k ---
         # TODO4: Compute similarities and get top-k indices
@@ -131,8 +130,7 @@ def main():
         top_chunks = [chunks[i] for i in top_indices]
         top_files = [sources[i] for i in top_indices]
 
-        #check cosine sim process to confirm chunks matching query are found
-        print("Most relevant files found:", top_files)
+
 
         # --- 5. Generate Answer ---
         context = "\n\n".join([f"From {sources[i]}:\n{chunks[i]}" for i in top_indices])
